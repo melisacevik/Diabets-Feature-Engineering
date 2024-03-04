@@ -36,38 +36,36 @@ pd.set_option('display.width', 500)
 
 df = pd.read_csv('datasets/diabetes.csv')
 
+df.columns= [col.upper() for col in df.columns]
+df.columns
 # Adım 1: Genel resmi inceleyiniz.
 
 def check_df(dataframe, head=5):
-    print("######################## Shape ############################")
+    print("-" * 25 + "Shape" + "-" * 25)
     print(dataframe.shape)
-    print("######################## Types ############################")
+    print("-" * 25 + "Types" + "-" * 25)
     print(dataframe.dtypes)
-    print("######################## Head #############################")
+    print("-" * 25 + "The First data" + "-" * 25)
     print(dataframe.head(head))
-    print("######################## Tail #############################")
+    print("-" * 25 + "The Last data" + "-" * 25)
     print(dataframe.tail(head))
-    print("######################## NA ###############################")
+    print("-" * 25 + "Missing values" + "-" * 25)
     print(dataframe.isnull().sum())
-    print("####################### Quantiles #########################")
+    print("-" * 25 + "Describe the data" + "-" * 25)
     # Sayısal değişkenlerin dağılım bilgisi
     print(dataframe.describe([0, 0.05, 0.50, 0.95, 0.99, 1]).T)
-    print("####################### Value Count #########################")
-    print(dataframe.value_counts())
-    print("####################### Unique #########################")
+    print("-" * 25 + "Distinct Values" + "-" * 25)
     print(dataframe.nunique())
 
 check_df(df)
 
-df.groupby("Outcome").mean()
-df["Outcome"].value_counts() * 100 / len(df)
+## yaş için histogram grafiği
 
 plt.figure(figsize=(8,7))
-plt.xlabel("Age", fontsize=10)
+plt.xlabel("AGE", fontsize=10)
 plt.ylabel("Count", fontsize=10)
-df["Age"].hist(edgecolor="black")
+df["AGE"].hist(edgecolor="black")
 plt.show()
-
 
 # Adım 2: Numerik ve kategorik değişkenleri yakalayınız.
 # Adım 3: Numerik ve kategorik değişkenlerin analizini yapınız.
@@ -134,72 +132,63 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
 
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
+
 def density_graph(df):
-    fig, ax = plt.subplots(4, 2, figsize=(20, 20)) #Bu satır, 4 satır ve 2 sütuna sahip bir figür oluşturur.
-    variables = df.columns.tolist() #Bu satır, veri çerçevesindeki sütun isimlerini bir listeye dönüştürür. Böylece her bir sütuna erişmek için indeksleme yapabiliriz.
+    fig, ax = plt.subplots(4, 2, figsize=(20, 20))
+    variables = df.columns.tolist()
     for i in range(4): #4 satır
-            for j in range(2): #sütun
+            for j in range(2): #2 sütun
                 sns.distplot(df[variables[i*2 + j]], bins=20, ax=ax[i, j], color="red")
 
 density_graph(df)
 plt.show()
+
+#sns.pairplot(df)
+#plt.show()
+
 
 # Adım 4: Hedef değişken analizi yapınız.
 # (Kategorik değişkenlere göre hedef değişkenin ortalaması, hedef değişkene göre numerik değişkenlerin ortalaması)
 
 #tek kategorim olduğu için hedef değişkene göre numerik değişkenin ortalamasını alıyorum.
 
-
-
-df.head()
-df.columns
 def target_summary_with_num(dataframe, target, numerical_col):
     print(dataframe.groupby(target).agg({numerical_col: "mean"}), end="\n\n\n")
+    print("-" * 30)
 
-target_summary_with_num(df, "Outcome", "Age")
+df["OUTCOME"].value_counts()
 
 for col in num_cols:
-    target_summary_with_num(df, "Outcome", col)
+    target_summary_with_num(df, "OUTCOME", col)
+
 
 # incelediğimiz sonuca göre diyabet hastası olan kişilerin bütün değerleri, olmayanlara göre yüksek.
 
 # Adım 5: Aykırı gözlem analizi yapınız.
 
-def outlier_thresholds(dataframe, col_name, q1=0.25, q3=0.75):
-    quartile1 = dataframe[col_name].quantile(q1)
-    quartile3 = dataframe[col_name].quantile(q3)
-    interquantile_range = quartile3 - quartile1
-    up_limit = quartile3 + 1.5 * interquantile_range
-    low_limit = quartile1 - 1.5 * interquantile_range
-    if df[(df[col_name] > up_limit)].any(axis=None):
-        print(col_name, ": Yes")
-    else:
-        print(col_name, ": No")
 
-    return up_limit, low_limit
+def outlier_graph(df):
+    cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
-outlier_thresholds(df, "Age")
+    plt.figure(figsize=(15, 20))
+    for i, column in enumerate(num_cols):
+        plt.subplot(len(num_cols) // 2 + 1, 2, i+1)
+        sns.boxplot(x=df[column], color="red")
+        plt.title(f"Boxplot of {column}", pad=20)
 
-for col in df.columns:
-    outlier_thresholds(df,col)
+    plt.tight_layout()
 
-plt.figure(figsize=(8,7))
-sns.boxplot(x= df["Insulin"], color="red")
+outlier_graph(df)
 plt.show()
 
-def check_outlier(dataframe, col_name):
-    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
-    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
-        return True
-    else:
-        return False
-
-check_outlier(df, "Age") # aykırı değer var
-
-for col in df.columns:
-    check_outlier(df,col)
-
 # Adım 6: Eksik gözlem analizi yapınız.
+
+msno.bar(df)
+plt.show()
+
+
+#####
+
 def missing_values_table(dataframe, na_name=False):
     na_columns = [col for col in dataframe.columns if dataframe[col].isnull().sum() > 0] #eksik değerleri barındıran kolonlar
 
@@ -218,16 +207,39 @@ msno.bar(df, color="orange")
 plt.show()
 
 df.isnull().sum()
-p = sns.pairplot(df, hue="Outcome")
+p = sns.pairplot(df, hue="OUTCOME")
 plt.show()
 
 # Adım 7: Korelasyon analizi yapınız.
 
-corr = df[num_cols].corr()
+corr = df.corr()
+corr_df= corr.unstack().sort_values(ascending=False)
+corr_df= pd.DataFrame(corr_df)
+corr_df.reset_index(inplace=True)
+corr_df.columns=["var1","var2","corr"]
+corr_df[(corr_df["var1"]=="OUTCOME") & (corr_df["corr"].apply(lambda x: x!=1))].head()
+
 
 sns.set(rc={'figure.figsize': (12, 12)})
 sns.heatmap(corr, cmap="RdBu")
 plt.show()
+
+
+
+
+# Base Model
+
+y = df["OUTCOME"]
+X = df.drop(["OUTCOME"], axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=17)
+
+from sklearn.ensemble import RandomForestClassifier
+
+rf_model = RandomForestClassifier(random_state=46).fit(X_train, y_train)
+y_pred = rf_model.predict(X_test)
+accuracy_score(y_pred, y_test)
+
 
 # Görev 2 : Feature Engineering
 
@@ -237,3 +249,168 @@ plt.show()
 # Örneğin; bir kişinin glikoz veya insulin değeri 0 olamayacaktır.
 # Bu durumu dikkate alarak sıfır değerlerini ilgili değerlerde NaN olarak atama yapıp
 # sonrasında eksik değerlere işlemleri uygulayabilirsiniz.
+
+df[num_cols].describe().T
+
+selected_list =["GLUCOSE","SKINTHICKNESS","INSULIN","BMI","BLOODPRESSURE"]
+
+for col in selected_list:
+    df[col] = df[col].apply(lambda x: np.nan if x == 0 else x)
+
+df.isnull().sum()
+# 0 olan değerler NaN ile dolduruldu.
+
+# eksik değerlerin yerine ortalama değeri atama.
+
+for col in selected_list:
+    df[col] = df[col].fillna(df.groupby("OUTCOME")[col].transform("mean"))
+
+df.isnull().sum()
+
+# aykırı değer tespiti
+
+
+def outlier_thresholds(dataframe, col_name, q1=0.15, q3=0.85):
+    quartile1 = dataframe[col_name].quantile(q1)
+    quartile3 = dataframe[col_name].quantile(q3)
+    interquantile_range = quartile3 - quartile1
+    up_limit = quartile3 + 1.5 * interquantile_range
+    low_limit = quartile1 - 1.5 * interquantile_range
+    return low_limit,up_limit
+
+#bütün col için
+def check_outlier(dataframe, col_name):
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
+    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
+        return True
+    else:
+        return False
+
+for col in num_cols:
+    print(col ,check_outlier(df,col))
+
+def replace_with_thresholds(dataframe, variable):
+    low_limit, up_limit = outlier_thresholds(dataframe, variable)
+    dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
+    dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
+
+
+for col in num_cols:
+    print(col, check_outlier(df, col)) # aykırı değerleri gözlemleme
+
+for col in num_cols:
+    replace_with_thresholds(df, col)
+
+for col in num_cols:
+    print(col, check_outlier(df, col))
+
+
+# Adım 2: Yeni değişkenler oluşturunuz.
+
+df["AGE_NEW"]= pd.cut(df["AGE"],bins= [20,45,max(df["AGE"])], labels=["mature", "senior"])
+df["GLUCOSE_NEW"]= pd.cut(df["GLUCOSE"], bins=[0, 100, 140 , max(df["GLUCOSE"])], labels=["low", "normal", "high"])
+df["BMI_NEW"]=pd.cut(df["BMI"], bins=[18,25,32,max(df["BMI"])], labels=["Normal Weight","Overweight","Obese"])
+df.loc[df["INSULIN"]<=130,"INSULIN_NEW"]="normal"
+df.loc[df["INSULIN"]>130, "INSULIN_NEW"]="anormal"
+
+df["GLUCOSE_INSULIN"]=df["GLUCOSE"]*df["INSULIN"]
+df["INSULIN_BMI"]=df["INSULIN"]*df["BMI"]
+df["GLUCOSE_BLOODPRESSURE"]= df["GLUCOSE"]* df["BLOODPRESSURE"]
+df["INSULIN_BLOODPRESSURE"]= df["INSULIN"]*df["BLOODPRESSURE"]
+
+# AGE - GLUCOSE
+
+df.loc[(df["AGE_NEW"]=="mature") & (df["GLUCOSE_NEW"]=="low"),"AGE_GLUCOSE"]="mature-low"
+df.loc[(df["AGE_NEW"]=="mature") & (df["GLUCOSE_NEW"]=="normal"),"AGE_GLUCOSE"]="mature-normal"
+df.loc[(df["AGE_NEW"]=="mature") & (df["GLUCOSE_NEW"]=="high"),"AGE_GLUCOSE"]="mature-high"
+
+df.loc[(df["AGE_NEW"]=="senior") & (df["GLUCOSE_NEW"]=="low"),"AGE_GLUCOSE"]="senior-low"
+df.loc[(df["AGE_NEW"]=="senior") & (df["GLUCOSE_NEW"]=="normal"),"AGE_GLUCOSE"]="senior-normal"
+df.loc[(df["AGE_NEW"]=="senior") & (df["GLUCOSE_NEW"]=="high"),"AGE_GLUCOSE"]="senior-high"
+
+df.columns
+
+cat_cols, num_cols, cat_but_car = grab_col_names(df)
+
+cat_cols=[ col for col in cat_cols if col != "OUTCOME"]
+
+# Adım 3: Encoding işlemlerini gerçekleştiriniz.
+
+def label_encoder(dataframe, binary_col):
+    labelencoder = LabelEncoder()
+    dataframe[binary_col] = labelencoder.fit_transform(dataframe[binary_col])
+    return dataframe
+
+
+binary_cols = [col for col in cat_cols if df[col].nunique() == 2]
+
+for col in binary_cols:
+    df = label_encoder(df,col)
+
+# one hot encoder
+
+def one_hot_encoder(dataframe, categorical_cols, drop_first=False):
+    dataframe = pd.get_dummies(dataframe, columns=categorical_cols, drop_first=drop_first)
+    return dataframe
+
+cat_cols = [col for col in cat_cols if col not in binary_cols]
+
+df = one_hot_encoder(df, cat_cols, drop_first=True)
+
+# Adım 4: Numerik değişkenler için standartlaştırma yapınız.
+
+rs = RobustScaler()
+df[num_cols] = rs.fit_transform(df[num_cols])
+
+df[num_cols].head()
+
+# Adım 5: Model oluşturunuz.
+
+y = df["OUTCOME"]
+X = df.drop("OUTCOME", axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=17)
+
+# 1 : Random Forest Classifier
+rf_model = RandomForestClassifier(random_state=46)
+rf_model.fit(X_train, y_train)
+y_pred_1 = rf_model.predict(X_test)
+rf_accuracy= accuracy_score(y_pred_1, y_test)
+print(rf_accuracy)
+
+# 2 : Light Gradient Boosting Machine Classifier
+
+from lightgbm import LGBMClassifier
+
+lgbm_model= LGBMClassifier(random_state=42, verbosity=-1)
+lgbm_model.fit(X_train, y_train)
+y_pred_2 =lgbm_model.predict(X_test)
+lgbm_accuracy= accuracy_score(y_pred_2, y_test)
+print(lgbm_accuracy)
+
+# 3 : K-Nearest Neighbors Classifier
+from sklearn.neighbors import KNeighborsClassifier
+
+knn_model= KNeighborsClassifier()
+knn_model.fit(X_train, y_train)
+y_pred_6 =knn_model.predict(X_test)
+knn= accuracy_score(y_pred_6, y_test)
+print(knn)
+
+
+# Görselleştir
+
+def plot_importance(model, features, num=len(X), save=False):
+    feature_imp = pd.DataFrame({'Value': model.feature_importances_, 'Feature': features.columns})
+    plt.figure(figsize=(8, 8))
+    sns.set(font_scale=1)
+    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
+                                                                      ascending=False)[0:num])
+    plt.title('Features')
+    plt.tight_layout()
+    plt.show()
+    if save:
+        plt.savefig('importances.png')
+
+
+plot_importance(lgbm_model, X_train)
