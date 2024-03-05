@@ -112,15 +112,15 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
     # cat_cols, cat_but_car
     cat_cols = [col for col in dataframe.columns if dataframe[col].dtypes == "O"] # kategorik
     num_but_cat = [col for col in dataframe.columns if dataframe[col].nunique() < cat_th and
-                   dataframe[col].dtypes != "O"] #numerik ama kategorikse
+                   dataframe[col].dtypes != "O"] 
     cat_but_car = [col for col in dataframe.columns if dataframe[col].nunique() > car_th and
-                   dataframe[col].dtypes == "O"] # kategorik gibi gözüken ama kardinalliği yüksek değişkenleri bulma
-    cat_cols = cat_cols + num_but_cat # kategorik + numerik görünümlü kategorikler
-    cat_cols = [col for col in cat_cols if col not in cat_but_car] #kardinalitesi yüksek olan kategorikleri dışarıda bıraktık
+                   dataframe[col].dtypes == "O"] 
+    cat_cols = cat_cols + num_but_cat 
+    cat_cols = [col for col in cat_cols if col not in cat_but_car] 
 
     # num_cols
-    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"] #tipi objectten farklı olanlar
-    num_cols = [col for col in num_cols if col not in num_but_cat] # num_cols'dan numerik görünümlü kategorikleri dısarıda bıraktık
+    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"] 
+    num_cols = [col for col in num_cols if col not in num_but_cat]
 
     print(f"Observations: {dataframe.shape[0]}")
     print(f"Variables: {dataframe.shape[1]}")
@@ -149,8 +149,6 @@ plt.show()
 
 # Adım 4: Hedef değişken analizi yapınız.
 # (Kategorik değişkenlere göre hedef değişkenin ortalaması, hedef değişkene göre numerik değişkenlerin ortalaması)
-
-#tek kategorim olduğu için hedef değişkene göre numerik değişkenin ortalamasını alıyorum.
 
 def target_summary_with_num(dataframe, target, numerical_col):
     print(dataframe.groupby(target).agg({numerical_col: "mean"}), end="\n\n\n")
