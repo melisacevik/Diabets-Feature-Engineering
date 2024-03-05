@@ -17,9 +17,9 @@ Projede şu adımlar izlenir:
 3. Hedef değişkenin (outcome) incelenmesi.
 4. Aykırı değer analizi.
 5. Eksik gözlem analizi ve eksik değerlerin işlenmesi.
-6. Özellik Mühendisliği: Yeni özelliklerin oluşturulması.
+6. Feature Engineering: Yeni özelliklerin oluşturulması.
 7. Kodlanmış özellikler ve standartlaştırılmış sayısal değişkenler.
-8. Makine Öğrenimi Modellerinin Oluşturulması: Random Forest, LightGBM ve K-Nearest Neighbors sınıflandırıcıları ile modellerin eğitimi ve değerlendirilmesi.
+8. Machine Learning ile Modellerinin Oluşturulması: Random Forest, LightGBM ve K-Nearest Neighbors sınıflandırıcıları ile modellerin eğitimi ve değerlendirilmesi.
 
 ## Kurulum
 
