@@ -1,8 +1,8 @@
 ![diabets](https://github.com/melisacevik/Diabets-Feature-Engineering/assets/113050206/22b298ae-ad7d-484c-bdca-75f23b6ea8e8)
 
-# 🩸⛑️ Özellik Mühendisliği & Makine Öğrenimi ile Diyabet Tahmini 💉🏥
+# 🩸⛑️ Feature Engineering & Machine Learning ile Diyabet Tahmini 💉🏥
 
-☞ Bu proje, Amerika Birleşik Devletleri'nde bulunan Pima Kızılderili kadınları üzerinde yapılan diyabet araştırması için kullanılan veri seti üzerinde çeşitli veri analizleri, özellik mühendisliği ve makine öğrenimi modellemesi içerir. Projenin amacı, hamilelik sayısı, glikoz seviyeleri, vücut kitle indeksi gibi çeşitli özellikler kullanılarak bir kişinin diyabet hastalığına sahip olup olmadığını belirlemektir.
+☞ Bu proje, Amerika Birleşik Devletleri'nde bulunan Pima Indian kadınları üzerinde yapılan diyabet araştırması için kullanılan veri seti üzerinde çeşitli veri analizleri, feature engineering ve machine learning modellemesi içerir. Projenin amacı, hamilelik sayısı, glikoz seviyeleri, vücut kitle indeksi gibi çeşitli özellikler kullanılarak bir kişinin diyabet hastalığına sahip olup olmadığını belirlemektir.
 
 ## Veri Seti
 
