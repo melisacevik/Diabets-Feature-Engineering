@@ -35,6 +35,6 @@ Projeyi yerel makinenizde çalıştırmak için şu adımları izleyebilirsiniz:
 Projeyi açtıktan sonra, `diabetes_prediction.ipynb` adlı Jupyter Notebook dosyasını çalıştırarak adım adım analizleri ve modelleme sürecini görebilir ve sonuçları inceleyebilirsiniz.
 
 ## Güncel Versiyon
-Bu projenin Makine Öğrenmesi Pipeline çözümüne buradan ulaşabilirsiniz☞ ![Kaggle Linki](https://www.kaggle.com/code/melisacevik/machine-learning-pipeline1)
+Bu projenin Makine Öğrenmesi Pipeline çözümüne buradan ulaşabilirsiniz☞ [Kaggle Linki](https://www.kaggle.com/code/melisacevik/machine-learning-pipeline1)
 
 
